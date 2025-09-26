@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>VibeCoding 详情页原型 (V16 - 终极完整版)</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+        />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+        <link
+            rel="stylesheet"
+            href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"
+        />
+        <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+        <script>
+            tailwind.config = {
+                theme: { extend: { colors: { "brand-blue": "#4285F4" } } },
+            };
+        </script>
+        <style>
+            .mobile-shell {
+                width: 100%;
+                max-width: 420px;
+                height: 850px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                border-radius: 20px;
+                overflow: hidden;
+                position: relative;
+                background-color: #fff;
+                display: flex;
+                flex-direction: column;
+            }
+            .header {
+                height: 44px;
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                padding: 0 1rem;
+                border-bottom: 1px solid #e5e5e5;
+                z-index: 10;
+                background: #fff;
+            }
+            .content-scroll-area {
+                flex-grow: 1;
+                overflow-y: auto;
+                padding-bottom: 80px;
+            }
+            .action-bar {
+                height: 60px;
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background-color: #fff;
+                border-top: 1px solid #e5e5e5;
+                display: flex;
+                align-items: center;
+                padding: 0 1rem;
+                z-index: 20;
+            }
+            .markdown-body h1 {
+                font-size: 1.875rem;
+                font-weight: 800;
+                margin-bottom: 1rem;
+            }
+            .markdown-body p {
+                line-height: 1.75;
+                margin-bottom: 1rem;
+                color: #374151;
+            }
+            .markdown-body blockquote {
+                border-left: 4px solid #d1d5db;
+                padding-left: 1rem;
+                margin-bottom: 1rem;
+                color: #6b7280;
+            }
+            .markdown-body ul {
+                list-style-type: disc;
+                padding-left: 1.5rem;
+                margin-bottom: 1rem;
+            }
+            .markdown-body li {
+                margin-bottom: 0.5rem;
+            }
+            .markdown-body pre {
+                margin-bottom: 1.5rem;
+                border-radius: 0.5rem;
+            }
+            .comment-overlay {
+                position: fixed;
+                inset: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 1000;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease-in-out;
+                display: flex;
+                justify-content: center;
+                align-items: flex-end;
+            }
+            .comment-overlay.is-open {
+                opacity: 1;
+                pointer-events: auto;
+            }
+            .comment-panel {
+                width: 100%;
+                max-width: 420px;
+                height: 60vh;
+                background-color: #fff;
+                border-top-left-radius: 1rem;
+                border-top-right-radius: 1rem;
+                transform: translateY(100%);
+                transition:
+                    transform 0.3s ease-in-out,
+                    height 0.3s ease-in-out,
+                    border-radius 0.3s ease-in-out;
+                display: flex;
+                flex-direction: column;
+            }
+            .comment-overlay.is-open .comment-panel {
+                transform: translateY(0);
+            }
+            .comment-panel.is-fullscreen {
+                height: 100vh;
+                height: 100dvh;
+                border-radius: 0;
+            }
+            .comment-panel-header {
+                flex-shrink: 0;
+            }
+            .comment-panel-body {
+                flex-grow: 1;
+                overflow-y: auto;
+                position: relative;
+            }
+            #markdown-editor {
+                position: absolute;
+                inset: 0;
+            }
+            .toastui-editor-toolbar-icons {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 24px !important;
+                height: 24px !important;
+            }
+            .custom-image-upload-group {
+                display: flex;
+                align-items: center;
+                border: 1px solid #e5e5e5;
+                border-radius: 4px;
+                overflow: hidden;
+                margin: 0 4px;
+            }
+            .custom-image-upload-group button {
+                padding: 4px 6px;
+                border: none;
+                background: none;
+                cursor: pointer;
+                transition: background-color 0.2s;
+            }
+            .custom-image-upload-group button:hover {
+                background-color: #f7f7f7;
+            }
+            .custom-image-upload-group button:first-child {
+                border-right: 1px solid #e5e5e5;
+            }
+        </style>
+    </head>
+    <body class="bg-gray-200 flex items-center justify-center min-h-screen">
+        <div class="mobile-shell">
+            <header class="header">
+                <a href="#" class="flex items-center">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-6 w-6 text-gray-700"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15 19l-7-7 7-7"
+                        />
+                    </svg>
+                    <span class="text-gray-700 ml-1">返回</span>
+                </a>
+            </header>
+
+            <main class="content-scroll-area">
+                <div class="p-4">
+                    <article class="markdown-body">
+                        <h1>
+                            Svelte 5 的符文 (Runes) 真的比 React Hooks 更好吗？
+                        </h1>
+                    </article>
+                    <div class="flex items-center my-4">
+                        <img
+                            class="w-10 h-10 rounded-full mr-3"
+                            src="https://i.pravatar.cc/40?u=ReactGuru"
+                            alt="Avatar"
+                        />
+                        <div>
+                            <p class="font-semibold text-gray-800">ReactGuru</p>
+                            <p class="text-sm text-gray-500">
+                                发布于 2025-09-08
+                            </p>
+                        </div>
+                    </div>
+                    <article class="markdown-body">
+                        <p>
+                            最近Svelte
+                            5引入了符文（Runes）作为新的响应式API，在社区引发了热烈讨论。很多人认为它解决了React
+                            Hooks的心智模型难题，比如闭包陷阱和复杂的依赖数组。
+                        </p>
+                        <img
+                            src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=870"
+                            class="rounded-lg my-4"
+                            alt="Code"
+                        />
+                        <blockquote>
+                            “任何足够先进的技术都与魔法无异。” ——
+                            亚瑟·克拉克。Svelte的编译时魔法似乎正在验证这一点。
+                        </blockquote>
+                        <p>让我们看看一段Hooks代码的常见问题：</p>
+                        <pre><code class="language-javascript">function Counter() {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      console.log(count); // 这里会一直打印 0
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []); // 依赖项数组为空
+}</code></pre>
+                        <p>当然，Hooks也有其优势：</p>
+                        <ul>
+                            <li>庞大的生态系统和社区支持。</li>
+                            <li>纯JavaScript，无需特定的编译器。</li>
+                            <li>灵活性高，可以组合出复杂的逻辑。</li>
+                        </ul>
+                        <p>那么，大家怎么看？你更喜欢哪种范式？</p>
+                    </article>
+                    <div class="mt-6 flex flex-wrap gap-2">
+                        <span
+                            class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-1 rounded-full"
+                            >React</span
+                        >
+                        <span
+                            class="bg-orange-100 text-orange-800 text-xs font-semibold px-2.5 py-1 rounded-full"
+                            >Svelte</span
+                        >
+                    </div>
+                    <hr class="my-6" />
+                    <div id="comments-list">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">
+                            全部评论 (156)
+                        </h3>
+                        <div class="space-y-5">
+                            <div class="comment-item flex items-start">
+                                <img
+                                    class="w-9 h-9 rounded-full mr-3 mt-1"
+                                    src="https://i.pravatar.cc/40?u=VueLover"
+                                    alt="Avatar"
+                                />
+                                <div class="flex-1">
+                                    <p
+                                        class="font-semibold text-gray-800 text-sm"
+                                    >
+                                        VueLover
+                                        <span
+                                            class="text-xs text-gray-500 font-normal ml-2"
+                                            >3小时前</span
+                                        >
+                                    </p>
+                                    <p class="text-gray-700 my-1">
+                                        隔壁Vue表示，我们的Reactivity
+                                        API一直很稳定...
+                                    </p>
+                                    <button
+                                        class="text-xs text-gray-500 font-semibold open-comment-panel"
+                                    >
+                                        回复
+                                    </button>
+                                </div>
+                            </div>
+                            <div
+                                id="my-comment"
+                                class="comment-item flex items-start"
+                            >
+                                <img
+                                    class="w-9 h-9 rounded-full mr-3 mt-1"
+                                    src="https://i.pravatar.cc/40?u=MySelf"
+                                    alt="Avatar"
+                                />
+                                <div class="flex-1">
+                                    <p
+                                        class="font-semibold text-blue-600 text-sm"
+                                    >
+                                        You (我)
+                                        <span
+                                            class="text-xs text-gray-500 font-normal ml-2"
+                                            >2小时前</span
+                                        >
+                                    </p>
+                                    <p class="text-gray-700 my-1">
+                                        我刚从 React 转到
+                                        Svelte，感觉符文确实降低了心智负担，写起来很顺畅！
+                                    </p>
+                                    <div class="flex items-center space-x-4">
+                                        <button
+                                            class="text-xs text-gray-500 font-semibold open-comment-panel"
+                                        >
+                                            回复</button
+                                        ><button
+                                            id="delete-comment-btn"
+                                            class="text-xs text-red-500 font-semibold"
+                                        >
+                                            删除
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="comment-item flex items-start">
+                                <img
+                                    class="w-9 h-9 rounded-full mr-3 mt-1"
+                                    src="https://i.pravatar.cc/40?u=SvelteFan"
+                                    alt="Avatar"
+                                />
+                                <div class="flex-1">
+                                    <p
+                                        class="font-semibold text-gray-800 text-sm"
+                                    >
+                                        SvelteFan
+                                        <span
+                                            class="text-xs text-gray-500 font-normal ml-2"
+                                            >1小时前</span
+                                        >
+                                    </p>
+                                    <p class="text-gray-700 my-1">
+                                        $state yyds! Svelte is the future.
+                                    </p>
+                                    <button
+                                        class="text-xs text-gray-500 font-semibold open-comment-panel"
+                                    >
+                                        回复
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="action-bar">
+                <div
+                    id="comment-trigger"
+                    class="flex-grow bg-gray-100 rounded-full h-10 flex items-center px-4 cursor-pointer open-comment-panel"
+                >
+                    <span class="text-gray-400">说说你的看法...</span>
+                </div>
+                <div class="flex items-center space-x-5 ml-4">
+                    <button
+                        class="flex flex-col items-center text-gray-600 hover:text-brand-blue"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-6 w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 18.236V6.236a2 2 0 012-2h4.734a2 2 0 011.789 2.894l-1.5 3z"
+                            /></svg
+                        ><span class="text-xs">542</span>
+                    </button>
+                    <button
+                        class="flex flex-col items-center text-gray-600 hover:text-yellow-500"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-6 w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
+                            /></svg
+                        ><span class="text-xs">收藏</span>
+                    </button>
+                </div>
+            </footer>
+        </div>
+
+        <div id="comment-overlay" class="comment-overlay">
+            <div id="comment-panel" class="comment-panel">
+                <div
+                    class="comment-panel-header flex items-center justify-between p-2 border-b flex-shrink-0 bg-gray-50"
+                >
+                    <button
+                        id="close-comment-panel"
+                        class="text-gray-600 px-3 py-2"
+                    >
+                        取消
+                    </button>
+                    <button
+                        id="fullscreen-toggle"
+                        class="text-gray-600 px-3 py-2"
+                    >
+                        <svg
+                            id="icon-expand"
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-5 w-5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 1v4m0 0h-4m4 0l-5-5"
+                            />
+                        </svg>
+                        <svg
+                            id="icon-compress"
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-5 w-5 hidden"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path d="M15 4l-5 5M9 19l5-5M20 9l-5 5M5 15l5-5" />
+                        </svg>
+                    </button>
+                    <button
+                        class="bg-brand-blue text-white px-4 py-1.5 rounded-full text-sm font-semibold"
+                    >
+                        发布
+                    </button>
+                </div>
+                <div class="comment-panel-body">
+                    <div id="markdown-editor"></div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            hljs.highlightAll();
+            document.addEventListener("DOMContentLoaded", () => {
+                const commentOverlay =
+                    document.getElementById("comment-overlay");
+                const commentPanel = document.getElementById("comment-panel");
+                const openTriggers = document.querySelectorAll(
+                    ".open-comment-panel",
+                );
+                const closeButton = document.getElementById(
+                    "close-comment-panel",
+                );
+                const fullscreenToggle =
+                    document.getElementById("fullscreen-toggle");
+                const iconExpand = document.getElementById("icon-expand");
+                const iconCompress = document.getElementById("icon-compress");
+                const deleteButton =
+                    document.getElementById("delete-comment-btn");
+                const myComment = document.getElementById("my-comment");
+
+                let editorInstance = null;
+
+                const initEditor = () => {
+                    if (editorInstance) return;
+                    const galleryInput = document.createElement("input");
+                    galleryInput.type = "file";
+                    galleryInput.accept = "image/*";
+                    galleryInput.multiple = true;
+                    galleryInput.style.display = "none";
+                    const cameraInput = document.createElement("input");
+                    cameraInput.type = "file";
+                    cameraInput.accept = "image/*";
+                    cameraInput.capture = "camera";
+                    cameraInput.style.display = "none";
+                    document.body.appendChild(galleryInput);
+                    document.body.appendChild(cameraInput);
+
+                    const cameraIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-700" viewBox="0 0 24 24" fill="currentColor"><path d="M9.4 11.3c-.8 0-1.5.7-1.5 1.5s.7 1.5 1.5 1.5 1.5-.7 1.5-1.5-.7-1.5-1.5-1.5z"/><path d="M20 4h-3.17L15 2H9L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 13.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>`;
+                    const galleryIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-700" viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h24v24H0z" fill="none"/><path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4l2.03 2.71L16 11l4 5H8l3-4zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"/></svg>`;
+
+                    editorInstance = new toastui.Editor({
+                        el: document.querySelector("#markdown-editor"),
+                        height: "100%",
+                        initialEditType: "wysiwyg",
+                        previewStyle: "tab",
+                        placeholder: "输入你的评论，支持 Markdown 格式...",
+                        toolbarItems: [
+                            ["heading", "bold", "italic"],
+                            ["quote", "code", "codeblock"],
+                            [
+                                {
+                                    name: "customImage",
+                                    tooltip: "Upload Images",
+                                    className: "custom-image-upload-group",
+                                    children: [
+                                        {
+                                            name: "camera",
+                                            tooltip: "Take Photo",
+                                            command: "takePhoto",
+                                            className:
+                                                "toastui-editor-toolbar-icons",
+                                            html: cameraIconSVG,
+                                        },
+                                        {
+                                            name: "gallery",
+                                            tooltip: "Choose from Gallery",
+                                            command: "chooseFromGallery",
+                                            className:
+                                                "toastui-editor-toolbar-icons",
+                                            html: galleryIconSVG,
+                                        },
+                                    ],
+                                },
+                            ],
+                        ],
+                    });
+
+                    editorInstance.addCommand("takePhoto", () => {
+                        cameraInput.click();
+                    });
+                    editorInstance.addCommand("chooseFromGallery", () => {
+                        galleryInput.click();
+                    });
+
+                    const handleFileSelection = (event) => {
+                        const files = event.target.files;
+                        if (!files || files.length === 0) return;
+                        Array.from(files).forEach((file) => {
+                            const reader = new FileReader();
+                            reader.onload = (e) =>
+                                editorInstance.exec("addImage", {
+                                    imageUrl: e.target.result,
+                                    altText: file.name,
+                                });
+                            reader.readAsDataURL(file);
+                        });
+                        event.target.value = "";
+                    };
+
+                    galleryInput.addEventListener(
+                        "change",
+                        handleFileSelection,
+                    );
+                    cameraInput.addEventListener("change", handleFileSelection);
+                };
+
+                const openPanel = () => {
+                    commentOverlay.classList.add("is-open");
+                    setTimeout(initEditor, 100);
+                };
+                const closePanel = () =>
+                    commentOverlay.classList.remove("is-open");
+
+                openTriggers.forEach((trigger) =>
+                    trigger.addEventListener("click", openPanel),
+                );
+                closeButton.addEventListener("click", closePanel);
+                commentOverlay.addEventListener("click", (event) => {
+                    if (event.target === commentOverlay) closePanel();
+                });
+
+                if (deleteButton && myComment) {
+                    deleteButton.addEventListener("click", () => {
+                        if (confirm("确定要删除这条评论吗？")) {
+                            myComment.style.transition =
+                                "opacity 0.3s ease-out";
+                            myComment.style.opacity = "0";
+                            setTimeout(() => myComment.remove(), 300);
+                        }
+                    });
+                }
+
+                fullscreenToggle.addEventListener("click", () => {
+                    commentPanel.classList.toggle("is-fullscreen");
+                    iconExpand.classList.toggle("hidden");
+                    iconCompress.classList.toggle("hidden");
+                });
+            });
+        </script>
+    </body>
+</html>

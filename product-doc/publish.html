@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>VibeCoding 发布功能原型 (Buttons Restored)</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+            rel="stylesheet"
+        />
+
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/vditor@3.10.2/dist/index.css"
+        />
+        <script src="https://cdn.jsdelivr.net/npm/vditor@3.10.2/dist/index.min.js"></script>
+
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ["Roboto", "sans-serif"],
+                        },
+                        colors: {
+                            "brand-blue": {
+                                DEFAULT: "#4285F4",
+                                light: "#E8F0FE",
+                            },
+                            surface: { DEFAULT: "#FFFFFF", variant: "#F7F9FC" },
+                            "on-surface": {
+                                DEFAULT: "#1F2937",
+                                variant: "#5F6368",
+                            },
+                            outline: "#DDE1E5",
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            body {
+                font-family: "Roboto", sans-serif;
+                background-color: #f0f2f5;
+            }
+            .vditor {
+                --panel-background-color: var(--fallback-s-background, #ffffff);
+                --toolbar-background-color: var(
+                    --fallback-s-background,
+                    #ffffff
+                );
+                --textarea-background-color: var(
+                    --fallback-s-background,
+                    #ffffff
+                );
+                border: none;
+            }
+            .vditor-toolbar {
+                border-bottom: 1px solid #dde1e5;
+            }
+        </style>
+    </head>
+    <body class="flex items-center justify-center min-h-screen p-4">
+        <div
+            class="mobile-shell w-full max-w-[420px] h-[850px] bg-surface-variant shadow-2xl rounded-2xl overflow-hidden flex flex-col relative"
+        >
+            <div
+                class="status-bar flex-shrink-0 bg-surface text-on-surface text-lg font-medium p-4 border-b border-outline"
+            >
+                VibeCoding
+            </div>
+
+            <main class="flex-grow p-4 text-center">
+                <h2 class="text-xl font-bold text-gray-700 mt-10">社区首页</h2>
+                <p class="text-gray-500 mt-2">
+                    点击底部的 '+' 按钮开始发布内容。
+                </p>
+            </main>
+
+            <footer
+                class="relative bg-surface border-t border-outline flex-shrink-0 z-10"
+            >
+                <div class="flex justify-around items-center h-16">
+                    <a
+                        href="#"
+                        class="flex flex-col items-center justify-center w-1/5 text-brand-blue"
+                        ><svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-6 w-6"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                        >
+                            <path
+                                d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"
+                            /></svg
+                        ><span class="text-xs font-medium">首页</span></a
+                    >
+                    <a
+                        href="#"
+                        class="flex flex-col items-center justify-center w-1/5 text-on-surface-variant"
+                        ><svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-6 w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+                            /></svg
+                        ><span class="text-xs font-medium">精华</span></a
+                    >
+                    <div class="w-1/5"></div>
+                    <a
+                        href="#"
+                        class="flex flex-col items-center justify-center w-1/5 text-on-surface-variant"
+                        ><svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-6 w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
+                            /></svg
+                        ><span class="text-xs font-medium">收藏</span></a
+                    >
+                    <a
+                        href="#"
+                        class="flex flex-col items-center justify-center w-1/5 text-on-surface-variant"
+                        ><svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-6 w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                            /></svg
+                        ><span class="text-xs font-medium">我的</span></a
+                    >
+                </div>
+                <div
+                    id="open-publish-panel-btn"
+                    class="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/3"
+                >
+                    <button
+                        class="bg-brand-blue text-white rounded-2xl w-16 h-16 flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-8 w-8"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 4v16m8-8H4"
+                            />
+                        </svg>
+                    </button>
+                </div>
+            </footer>
+
+            <div
+                id="publish-overlay"
+                class="absolute inset-0 z-20 pointer-events-none transition-colors duration-300"
+            >
+                <div
+                    id="publish-panel"
+                    class="absolute inset-0 bg-surface rounded-t-2xl flex flex-col transform transition-transform duration-300 ease-in-out"
+                >
+                    <div
+                        class="flex-shrink-0 flex items-center justify-between p-2 h-16 border-b border-outline"
+                    >
+                        <button
+                            id="close-publish-panel"
+                            class="text-brand-blue font-medium px-4 py-2 rounded-full hover:bg-brand-blue-light transition-colors"
+                        >
+                            取消
+                        </button>
+                        <h2 class="text-on-surface text-lg font-medium">
+                            发布内容
+                        </h2>
+                        <button
+                            id="publish-btn"
+                            class="bg-brand-blue text-white font-medium px-6 py-2 rounded-full hover:shadow-md transition-shadow"
+                        >
+                            发布
+                        </button>
+                    </div>
+
+                    <div class="flex-grow flex flex-col min-h-0">
+                        <div class="flex-shrink-0">
+                            <input
+                                type="text"
+                                id="post-title"
+                                class="w-full text-2xl font-medium p-4 border-b border-outline focus:outline-none focus:border-brand-blue transition-colors"
+                                placeholder="添加标题"
+                            />
+                        </div>
+                        <div class="flex-shrink-0 p-4 border-b border-outline">
+                            <div
+                                id="tag-container"
+                                class="flex flex-wrap items-center gap-2"
+                            ></div>
+                            <input
+                                type="text"
+                                id="tag-input"
+                                class="w-full text-sm pt-2 focus:outline-none"
+                                placeholder="添加标签 (最多5个, 按回车确认)"
+                            />
+                        </div>
+                        <div id="markdown-editor" class="flex-grow"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const overlay = document.getElementById("publish-overlay");
+                const panel = document.getElementById("publish-panel");
+                const openBtn = document.getElementById(
+                    "open-publish-panel-btn",
+                );
+                const closeBtn = document.getElementById("close-publish-panel");
+                const publishBtn = document.getElementById("publish-btn");
+                const titleInput = document.getElementById("post-title");
+                const tagInput = document.getElementById("tag-input");
+                const tagContainer = document.getElementById("tag-container");
+
+                let vditorInstance = null;
+                let tags = [];
+
+                panel.style.transform = "translateY(100%)";
+
+                const initEditor = () => {
+                    if (vditorInstance) return;
+
+                    // Create the hidden file input for the custom import button
+                    const importFileInput = document.createElement("input");
+                    importFileInput.type = "file";
+                    importFileInput.accept = ".md,.pdf";
+                    importFileInput.style.display = "none";
+                    importFileInput.addEventListener("change", (event) => {
+                        const file = event.target.files[0];
+                        if (!file) return;
+                        alert(`模拟导入文件：${file.name}`);
+                        console.log(`Importing file: ${file.name}`);
+                        event.target.value = "";
+                    });
+                    document.body.appendChild(importFileInput);
+
+                    vditorInstance = new Vditor("markdown-editor", {
+                        height: "100%",
+                        placeholder: "分享你的技术见解...",
+                        typewriterMode: true,
+                        // RESTORED: Toolbar now includes "upload" and the custom "importFile" button
+                        toolbar: [
+                            "headings",
+                            "bold",
+                            "italic",
+                            "strike",
+                            "|",
+                            "quote",
+                            "code",
+                            "inline-code",
+                            "upload", // Standard image upload button
+                            "|",
+                            "list",
+                            "ordered-list",
+                            "check",
+                            "|",
+                            "undo",
+                            "redo",
+                            {
+                                // Custom file import button
+                                name: "importFile",
+                                tip: "导入文件 (MD/PDF)",
+                                icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 9V4.5L18.5 9H13z"/></svg>',
+                                click() {
+                                    importFileInput.click();
+                                },
+                            },
+                        ],
+                        upload: {
+                            accept: "image/*",
+                            multiple: true,
+                            handler(files) {
+                                Array.from(files).forEach((file) => {
+                                    const reader = new FileReader();
+                                    reader.onload = (event) => {
+                                        vditorInstance.insertValue(
+                                            `![${file.name}](${event.target.result})\n`,
+                                        );
+                                    };
+                                    reader.readAsDataURL(file);
+                                });
+                                return null;
+                            },
+                        },
+                    });
+                };
+
+                const openPanel = () => {
+                    overlay.style.pointerEvents = "auto";
+                    overlay.style.backgroundColor = "rgba(0, 0, 0, 0.4)";
+                    panel.style.transform = "translateY(0%)";
+                    setTimeout(initEditor, 50);
+                };
+                const closePanel = () => {
+                    overlay.style.backgroundColor = "rgba(0, 0, 0, 0)";
+                    panel.style.transform = "translateY(100%)";
+                    setTimeout(() => {
+                        overlay.style.pointerEvents = "none";
+                        titleInput.value = "";
+                        if (vditorInstance) vditorInstance.setValue("");
+                        tags = [];
+                        renderTags();
+                    }, 300);
+                };
+
+                const renderTags = () => {
+                    tagContainer.innerHTML = "";
+                    tags.forEach((tag, index) => {
+                        const tagEl = document.createElement("span");
+                        tagEl.className =
+                            "inline-flex items-center bg-gray-100 text-gray-700 text-sm font-medium px-3 py-1 rounded-full";
+                        tagEl.innerHTML = `<span>${tag}</span><button class="ml-2 text-gray-400 hover:text-gray-600 focus:outline-none" data-index="${index}">&times;</button>`;
+                        tagContainer.appendChild(tagEl);
+                    });
+                };
+
+                tagInput.addEventListener("keydown", (e) => {
+                    if (e.key === "Enter" && e.target.value.trim() !== "") {
+                        e.preventDefault();
+                        if (tags.length < 5) {
+                            tags.push(e.target.value.trim());
+                            e.target.value = "";
+                            renderTags();
+                        } else {
+                            alert("最多添加5个标签。");
+                        }
+                    }
+                });
+
+                tagContainer.addEventListener("click", (e) => {
+                    if (e.target.tagName === "BUTTON") {
+                        tags.splice(parseInt(e.target.dataset.index, 10), 1);
+                        renderTags();
+                    }
+                });
+
+                openBtn.addEventListener("click", openPanel);
+                closeBtn.addEventListener("click", closePanel);
+
+                publishBtn.addEventListener("click", () => {
+                    const title = titleInput.value.trim();
+                    const content = vditorInstance
+                        ? vditorInstance.getValue()
+                        : "";
+                    if (!title) {
+                        alert("请输入标题！");
+                        return;
+                    }
+                    if (!content) {
+                        alert("请输入内容！");
+                        return;
+                    }
+                    console.log({ title, tags, content });
+                    alert("发布成功！(数据已打印在控制台)");
+                    closePanel();
+                });
+            });
+        </script>
+    </body>
+</html>
